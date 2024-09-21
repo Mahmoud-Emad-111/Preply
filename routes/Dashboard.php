@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\UserController;
+use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\verificationCodeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -22,6 +23,12 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::controller(UserController::class)->prefix('/user/')->group(function () {
+    Route::post('ChangeStatus', 'ChangeStatus');
+    Route::get('Get', 'Get');
+
+});
+
+Route::controller(TeacherController::class)->prefix('/Teacher/')->group(function () {
     Route::post('ChangeStatus', 'ChangeStatus');
     Route::get('Get', 'Get');
 

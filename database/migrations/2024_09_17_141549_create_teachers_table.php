@@ -16,15 +16,14 @@ return new class extends Migration
             $table->string('name');
             $table->tinyText('country');
             $table->tinyText('subject');
+            $table->longText('description');
             $table->string('image');
             $table->string('video');
-            $table->longText('Description');
-            $table->string('phone')->unique();
             $table->integer('CostHour');
-            $table->foreignId('working_hours_id')->nullable()->constrained()->onDelete('cascade');
-
+            $table->string('phone')->unique();
+            $table->integer('verification_code')->nullable();
+            $table->enum('status', ['Active','Rejected'])->default('Active');
             $table->string('password');
-
             $table->timestamps();
         });
     }

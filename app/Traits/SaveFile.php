@@ -7,11 +7,11 @@ use Illuminate\Support\Facades\Storage;
 trait SaveFile
 {
     /**
-     * Save images
+     * Save files
      */
-    public function saveFile($image, string $name)
+    public function saveFile($file, string $name)
     {
-        $full=$image->store($name , 'public');
+        $full=$file->store($name , 'public');
         return $full;
     }
 

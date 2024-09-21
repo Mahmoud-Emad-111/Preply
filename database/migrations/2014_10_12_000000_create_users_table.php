@@ -17,7 +17,7 @@ return new class extends Migration
             // $table->string('email')->unique()->nullable();
             $table->string('phone')->unique()->nullable();
             $table->integer('verification_code')->nullable();
-            $table->enum('status', ['Active', 'Pending','Rejected'])->default('Pending');
+            $table->enum('status', ['Active','Rejected'])->default('Active');
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();

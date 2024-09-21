@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserRequest;
+use App\Http\Resources\TeacherFollowingResources;
 use App\Models\User;
 use App\Traits\verification_code;
 use Illuminate\Http\Request;
@@ -18,11 +19,6 @@ class UserController extends Controller
     //
     public function Register(UserRequest $request){
 
-        // if ($request->phone==null && $request->email==null) {
-        //     return $this->handelError(
-        //         'Please enter a valid phone number or email address.'
-        //     ,422);
-        // }
         $code=rand(1000,9999);
         $user=User::create([
             'name'=>$request->name,
@@ -33,8 +29,7 @@ class UserController extends Controller
 
         $this->SentCode($code,$request->phone);
 
-        $response['token'] = $user->createToken($user->phone)->plainTextToken;
-        return $this->handelResponse($response, 'Registration has been completed successfully and the verification code has been sent.');
+        return $this->handelResponse('', 'Registration has been completed successfully and the verification code has been sent.');
 
     }
 
@@ -43,16 +38,30 @@ class UserController extends Controller
             'phone' => 'required|exists:users,phone|regex:/^([0-9\s\-\+\(\)]*)$/|min:10',
             'password' => 'required|min:8',
         ]);
+
         if ($validate->fails()) {
             return response()->json($validate->errors());
         }
+
         if (Auth::attempt(['phone' => $request->phone, 'password' => $request->password])) {
             $user = Auth::user();
-            $response = [
-                'name' => $user->name,
-                'token' => $user->createToken($user->phone)->plainTextToken,
-            ];
-            return $this->handelResponse($response, 'login successfully');
+
+            if($user->verification_code==null){
+                $response = [
+                    'name' => $user->name,
+                    'token' => $user->createToken($user->phone)->plainTextToken,
+                ];
+                return $this->handelResponse($response, 'login successfully');
+
+            }else{
+                $code=rand(1000,9999);
+                $user->verification_code=$code;
+                $user->save();
+                $this->SentCode($code,$request->phone);
+                return $this->handelResponse('', ' the verification code has been sent.',204);
+
+            }
+
         } else {
             return $this->handelError(['error' => 'unauthorized'], 401);
         }
@@ -100,7 +109,7 @@ class UserController extends Controller
 
     public function ChangeStatus(Request $request){
         $validator = Validator::make($request->all(), [
-            'status' => 'required|in:Active,Pending,Rejected',
+            'status' => 'required|in:Active,Rejected',
             'id'=>'required|exists:users'
         ]);
 
@@ -116,4 +125,6 @@ class UserController extends Controller
     public function Get(){
         return User::all();
     }
+
+ 
 }

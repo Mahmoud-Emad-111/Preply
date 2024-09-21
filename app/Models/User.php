@@ -48,4 +48,10 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+
+    public function teacher(){
+        return $this->belongsToMany(Teacher::class,'teacher_followers','user_id');
+
+    }
 }

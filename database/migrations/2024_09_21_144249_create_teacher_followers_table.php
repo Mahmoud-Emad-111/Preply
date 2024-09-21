@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('working_hours', function (Blueprint $table) {
+        Schema::create('teacher_followers', function (Blueprint $table) {
             $table->id();
-            $table->string('day');
-            $table->string('hour')->nullable();
-            $table->foreignId('teacher_id')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreignId('teacher_id')->references('id')->on('teachers')->onDelete('cascade');
+
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('working_hours');
+        Schema::dropIfExists('teacher_followers');
     }
 };
